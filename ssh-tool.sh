@@ -9,7 +9,6 @@ openrc_location="openrc.sh" # Change this to the location of your downloaded Ope
 function login {
     # Attempt automatic login by querying for the OS (e.g. centos or ubuntu), else ask user for login user
     server_n=$1
-    echo "server_name = $server_n"
     server_id=$(nova list | grep -i $server_n | awk '{ print $2 }')
     echo "server_id = $server_id"
     server_ip=$(nova show $server_id | grep network | awk '{ print $6 }')
@@ -38,7 +37,8 @@ fi
 echo "Enter OpenStack server name to search for:"
 read server_name
 if [ -z $server_name ];
-    then echo test
+    then echo -e "${RED}Error: no server name specified${NC}"
+    exit 1
 fi
 server_list=($(nova list | grep -i $server_name | awk '{ print $4 }'))
 server_count=${#server_list[@]}
@@ -55,8 +55,8 @@ if [ "$server_count" -gt 1 ];
     login_msg $chosen_server
     login $chosen_server
 elif [ "$server_count" -eq 1 ];
-    then login_msg $(nova list | grep -i $server_name | awk '{ print $4 }')
-    login $server_name
+    then login_msg ${server_list[0]}
+    login ${server_list[0]}
 else
     echo -e "${RED}No matching servers were found.${NC}"
 fi
