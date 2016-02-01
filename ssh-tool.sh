@@ -13,11 +13,13 @@ function login {
     echo "server_id = $server_id"
     server_ip=$(nova show $server_id | grep network | awk '{ print $6 }')
     echo "server_ip = $server_ip"
-    nova show $server_id | grep image | grep -i 'centos'
-    if [ $? -eq 0 ];
+    image_name=$(nova show $server_id | grep image | awk '{ print $5 }' | tr -d '()')
+    image_desc=$(nova image-show $image_name | grep description)
+    echo $image_desc | grep -qi 'centos'
+    if [ $? -eq 0 ] ;
         then ssh centos@$server_ip
     else
-        nova show $server_id | grep image | grep -i 'ubuntu'
+        echo $image_desc | grep -qi 'ubuntu'
         if [ $? -eq 0 ];
             then ssh ubuntu@$server_ip
         else
@@ -32,7 +34,7 @@ function login_msg {
 }
 
 if [ -z "$OS_USERNAME" ];
-    then source $openrc_location;
+    then source $openrc_location; 
 fi
 echo "Enter OpenStack server name to search for:"
 read server_name
@@ -40,7 +42,7 @@ if [ -z $server_name ];
     then echo -e "${RED}Error: no server name specified${NC}"
     exit 1
 fi
-server_list=($(nova list | grep -i $server_name | awk '{ print $4 }'))
+server_list=($(nova list | awk '{if(NR>3)print $4}' | grep -i $server_name))
 server_count=${#server_list[@]}
 if [ "$server_count" -gt 1 ];
     then echo -e "Found ${YELLOW}$server_count${NC} matching servers..."
