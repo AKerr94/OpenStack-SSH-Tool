@@ -34,8 +34,15 @@ function login_msg {
 }
 
 if [ -z "$OS_USERNAME" ];
-    then source $openrc_location; 
+    then source $openrc_location;
 fi
+echo -e "Current region: ${YELLOW}$OS_REGION_NAME${NC}"
+echo "Type region name to switch to or press enter if OK:"
+read region_name
+if ! [ -z $region_name ];
+    then export OS_REGION_NAME=$region_name
+fi
+echo -e "Using region ${YELLOW}$OS_REGION_NAME${NC}"
 echo "Enter OpenStack server name to search for:"
 read server_name
 if [ -z $server_name ];
