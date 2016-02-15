@@ -7,7 +7,7 @@ You will need to download the openrc file for your tenancy from openstack and so
 
 ./ssh-tool.sh
 
-This will run the script, which will prompt you for input for region and server name to search for. Alternatively, these can be supplied as command line arguments with the following flags.
+This will run the script, which will prompt you for input for region and server name to search for, and attempt automatic login. Alternatively, these can be supplied as command line arguments with the following flags.
 
 -r [region]
 
