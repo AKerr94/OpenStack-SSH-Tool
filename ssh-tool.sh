@@ -121,4 +121,5 @@ elif [ "$server_count" -eq 1 ] ; then
     login ${server_list[0]} $USER_ARG
 else
     echo -e "${RED}No matching servers were found.${NC}"
+    exit 1
 fi
