@@ -7,6 +7,10 @@ NC='\033[0m'
 # Configuration
 openrc_location="openrc.sh" # Change this to the location of your downloaded OpenStack rc file
 
+function usage {
+    echo -e "${YELLOW}Usage: Optional args -r <OS_REGION_NAME> -s <server_name> -u <USERNAME> ${NC}"
+}
+
 function login {
     # Login with user from command line argument, else attempt automatic login by querying for the OS (e.g. centos or ubuntu), else ask user for login user
     server_n=$1
@@ -58,6 +62,10 @@ while [[ $# > 1 ]]
 do
 flag="$1"
 case $flag in
+    -h|--help)
+    usage && exit 1
+    shift
+    ;;
     -r|--region)
     OS_REGION_NAME="$2"
     echo -e "Read in ${YELLOW}$OS_REGION_NAME${NC} as ${GREEN}OS_REGION_NAME${NC}"
@@ -77,8 +85,7 @@ case $flag in
     ;;
     *)
     # unknown option
-    echo -e "${RED}Unknown flag `echo $flag | tr -d '-'`!${NC}"
-    echo -e "${RED}Usage: Optional args -r <OS_REGION_NAME> -s <server_name> -u <USERNAME> ${NC}"
+    echo -e "${RED}Unknown flag `echo $flag | tr -d '-'`!${NC}" && usage
     exit 1
 esac
 shift
@@ -98,7 +105,7 @@ if [ "$SERVER_SELECTED" = false ] ; then
     echo "Enter OpenStack server name to search for:"
     read server_name
     if [ -z $server_name ] ; then
-        echo -e "${RED}Error: no server name specified${NC}"
+        echo -e "${RED}Error: no server name specified${NC}" && usage
         exit 1
     fi
 fi
